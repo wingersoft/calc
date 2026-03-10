@@ -97,7 +97,7 @@ impl Calculator {
                     }
                     _ => {}
                 }
-                self.current_value = self.total_value.to_string();
+                self.current_value = self.format_to_2_decimals(self.total_value);
                 self.check_sum = false;
                 self.input_value = true;
                 self.previous_text = String::new();
@@ -105,15 +105,22 @@ impl Calculator {
         }
     }
 
+    fn format_to_2_decimals(&self, value: f64) -> String {
+        let formatted = format!("{:.2}", value);
+        // Remove trailing zeros after decimal point
+        let trimmed = formatted.trim_end_matches('0').trim_end_matches('.');
+        trimmed.to_string()
+    }
+
     fn sign_change(&mut self) {
         if let Ok(val) = self.current_value.parse::<f64>() {
-            self.current_value = (-val).to_string();
+            self.current_value = self.format_to_2_decimals(-val);
         }
     }
 
     fn percent(&mut self) {
         if let Ok(val) = self.current_value.parse::<f64>() {
-            self.current_value = (val / 100.0).to_string();
+            self.current_value = self.format_to_2_decimals(val / 100.0);
         }
     }
 
@@ -128,7 +135,14 @@ impl Calculator {
 
     fn update_display(&mut self) {
         if self.current_value.len() > 12 {
-            self.current_value = self.current_value.parse::<f64>().unwrap_or(0.0).to_string();
+            if let Ok(val) = self.current_value.parse::<f64>() {
+                // Use scientific notation for very large numbers
+                if val.abs() >= 1e12 {
+                    self.current_value = format!("{:.2e}", val);
+                } else {
+                    self.current_value = self.format_to_2_decimals(val);
+                }
+            }
         }
     }
 }
