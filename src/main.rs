@@ -1,8 +1,10 @@
 use eframe::egui;
 
 fn main() -> eframe::Result<()> {
+    let app_id = "nl.one.winger.calc";
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
+            .with_app_id(app_id)
             .with_inner_size([320.0, 490.0])
             .with_min_inner_size([300.0, 500.0]),
         ..Default::default()
