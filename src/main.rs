@@ -5,8 +5,8 @@ fn main() -> eframe::Result<()> {
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_app_id(app_id)
-            .with_inner_size([320.0, 490.0])
-            .with_min_inner_size([300.0, 500.0]),
+            .with_inner_size([320.0, 460.0])
+            .with_min_inner_size([320.0, 460.0]),
         ..Default::default()
     };
 
@@ -97,7 +97,7 @@ impl Calculator {
                     }
                     _ => {}
                 }
-                self.current_value = self.format_to_2_decimals(self.total_value);
+                self.current_value = self.format_to_4_decimals(self.total_value);
                 self.check_sum = false;
                 self.input_value = true;
                 self.previous_text = String::new();
@@ -105,8 +105,8 @@ impl Calculator {
         }
     }
 
-    fn format_to_2_decimals(&self, value: f64) -> String {
-        let formatted = format!("{:.2}", value);
+    fn format_to_4_decimals(&self, value: f64) -> String {
+        let formatted = format!("{:.4}", value);
         // Remove trailing zeros after decimal point
         let trimmed = formatted.trim_end_matches('0').trim_end_matches('.');
         trimmed.to_string()
@@ -114,13 +114,13 @@ impl Calculator {
 
     fn sign_change(&mut self) {
         if let Ok(val) = self.current_value.parse::<f64>() {
-            self.current_value = self.format_to_2_decimals(-val);
+            self.current_value = self.format_to_4_decimals(-val);
         }
     }
 
     fn percent(&mut self) {
         if let Ok(val) = self.current_value.parse::<f64>() {
-            self.current_value = self.format_to_2_decimals(val / 100.0);
+            self.current_value = self.format_to_4_decimals(val / 100.0);
         }
     }
 
@@ -138,9 +138,9 @@ impl Calculator {
             if let Ok(val) = self.current_value.parse::<f64>() {
                 // Use scientific notation for very large numbers
                 if val.abs() >= 1e12 {
-                    self.current_value = format!("{:.2e}", val);
+                    self.current_value = format!("{:.4e}", val);
                 } else {
-                    self.current_value = self.format_to_2_decimals(val);
+                    self.current_value = self.format_to_4_decimals(val);
                 }
             }
         }
@@ -156,7 +156,7 @@ impl eframe::App for Calculator {
                 // Previous calculation display
                 ui.label(
                     egui::RichText::new(&self.previous_text)
-                        .size(18.0)
+                        .size(20.0)
                         .color(egui::Color32::from_rgb(136, 136, 136)),
                 );
 
@@ -165,7 +165,7 @@ impl eframe::App for Calculator {
                 // Main display
                 ui.label(
                     egui::RichText::new(&self.current_value)
-                        .size(56.0)
+                        .size(30.0)
                         .color(egui::Color32::WHITE)
                         .strong(),
                 );
